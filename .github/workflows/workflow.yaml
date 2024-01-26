@@ -1,0 +1,34 @@
+on: workflow_dispatch
+
+name: Terraform Testing
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        rg_version: ["1.0.1"]
+        vnet_version: ["1.0.1", "2.0.0"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: actions/checkout@v4
+      - run: |
+          sed 's/{{RESOURCE_GROUP_VERSION}}/${{ matrix.rg_version }}/g; s/{{NETWORK_VERSION}}/${{ matrix.vnet_version }}/g' \
+            templates/main.tftest.hcl.template > tests/main.tftest.hcl
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - run: terraform init
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN }}
+      - run: terraform test

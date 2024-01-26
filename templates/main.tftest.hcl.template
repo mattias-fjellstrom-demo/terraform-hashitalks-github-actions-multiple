@@ -1,0 +1,44 @@
+variables {
+  location    = "swedencentral"
+  name_suffix = "hashitalks-${uuid()}"
+  tags        = {
+    team         = "HashiTalks Team"
+    project      = "HashiTalks Project"
+    cost_center  = "1234"
+    rg_version   = "{{RESOURCE_GROUP_VERSION}}"
+    vnet_version = "{{NETWORK_VERSION}}"
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+run "set_up_resource_group" {
+  module {
+    source  = "app.terraform.io/mattias-fjellstrom/resource-group-module/hashitalks"
+    version = "{{RESOURCE_GROUP_VERSION}}"
+  }
+}
+
+run "set_up_virtual_network" {
+  variables {
+    vnet_cidr_range = "10.0.0.0/16"
+    resource_group  = run.set_up_resource_group.resource_group
+    subnets         = [
+      {
+        name = "subnet-a"
+        subnet_cidr_range = "10.0.10.0/24
+      }
+      {
+        name = "subnet-b"
+        subnet_cidr_range = "10.0.20.0/24
+      }
+    ]
+  }
+
+  module {
+    source  = "app.terraform.io/mattias-fjellstrom/network-module/hashitalks"
+    version = "{{NETWORK_VERSION}}"
+  }
+}
