@@ -14,7 +14,7 @@ jobs:
         rg_version: ["3.0.0", "3.1.0"]
         vnet_version: ["2.1.0", "3.0.0"]
     runs-on: ubuntu-latest
-    name: Resource group module ${{ matrix.rg_version }} - Network module ${{ matrix.vnet_version }}
+    name: R ${{ matrix.rg_version }} - N ${{ matrix.vnet_version }}
     steps:
       - name: Azure login
         uses: azure/login@v1
