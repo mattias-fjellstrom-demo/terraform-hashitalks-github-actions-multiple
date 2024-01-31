@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rg_version: ["2.0.0", "3.0.0"]
-        vnet_version: ["2.0.0", "2.1.0"]
+        rg_version: ["3.0.0", "3.1.0"]
+        vnet_version: ["2.1.0", "3.0.0"]
     runs-on: ubuntu-latest
     name: Resource group module ${{ matrix.rg_version }} - Network module ${{ matrix.vnet_version }}
     steps:
